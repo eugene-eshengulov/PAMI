@@ -96,9 +96,11 @@ class ResponseMessage extends IncomingMessage
     public function addEvent(EventMessage $event)
     {
         $this->events[] = $event;
-        if (stristr($event->getEventList(), 'complete') !== false
-            || stristr($event->getName(), 'complete') !== false
-            || stristr($event->getName(), 'DBGetResponse') !== false
+        $eventList = $event->getEventList() ?? "";
+        $eventName = $event->getName() ?? "";
+        if (stristr($eventList, 'complete') !== false
+            || stristr($eventName, 'complete') !== false
+            || stristr($eventName, 'DBGetResponse') !== false
         ) {
             $this->completed = true;
         }
@@ -121,7 +123,8 @@ class ResponseMessage extends IncomingMessage
      */
     public function isSuccess()
     {
-        return stristr($this->getKey('Response'), 'Error') === false;
+        $response = $this->getKey('Response') ?? "";
+        return stristr($response, 'Error') === false;
     }
 
     /**
@@ -133,10 +136,11 @@ class ResponseMessage extends IncomingMessage
      */
     public function isList()
     {
+        $eventList = $this->getKey('EventList') ?? "";
+        $message = $this->getMessage() ?? "";
         return
-            stristr($this->getKey('EventList'), 'start') !== false
-            || stristr($this->getMessage(), 'follow') !== false
-        ;
+            stristr($eventList, 'start') !== false
+            || stristr($message, 'follow') !== false;
     }
 
     /**
